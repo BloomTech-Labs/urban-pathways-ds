@@ -1,0 +1,8 @@
+dnspython
+fastapi
+gunicorn
+pymongo[srv]
+pydantic[email]
+python-dotenv
+python-multipart
+uvicorn[standard]
