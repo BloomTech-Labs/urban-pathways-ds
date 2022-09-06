@@ -33,7 +33,7 @@ async def create_user(user: User = default_user):
     """ Creates one user
     @param user: User
     @return: Boolean Success """
-    return API.db.create(user.dict(exclude_none=True))
+    return API.db.create("Users", user.dict(exclude_none=True))
 
 
 @API.put("/read-users")
@@ -41,7 +41,7 @@ async def read_users(user_query: UserQuery = default_query):
     """ Returns array of all matched users
     @param user_query: UserQuery
     @return: Array[User] """
-    return API.db.read(user_query.dict(exclude_none=True))
+    return API.db.read("Users", user_query.dict(exclude_none=True))
 
 
 @API.patch("/update-users")
@@ -52,6 +52,7 @@ async def update_users(user_query: UserQuery = default_query,
     @param user_update: UserUpdate
     @return: Boolean Success """
     return API.db.update(
+        "Users",
         user_query.dict(exclude_none=True),
         user_update.dict(exclude_none=True),
     )
@@ -62,4 +63,4 @@ async def delete_users(user_query: UserQuery = default_query):
     """ Deletes all matched users
     @param user_query: UserQuery
     @return: Boolean Success """
-    return API.db.delete(user_query.dict(exclude_none=True))
+    return API.db.delete("Users", user_query.dict(exclude_none=True))
