@@ -6,21 +6,23 @@ from pymongo import MongoClient
 from pymongo.collection import Collection
 from dotenv import load_dotenv
 
+from app.validation import default_user
+
 
 class MongoDB:
     """ DocTests
     >>> db = MongoDB()
-    >>> db.create({"Test": True})
+    >>> db.create("Users", default_user)
     True
-    >>> db.read({"Test": True})
-    [{'Test': True}]
-    >>> db.update({"Test": True}, {"New Field": True})
+    >>> db.read("Users")
+    [{'name': 'John Smith', 'age': 42, 'email': 'john.smith@gmail.com', 'active': False, 'score': 0.5}]
+    >>> db.update("Users", {'name': 'John Smith'}, {'name': 'Tony Smith'})
     True
-    >>> db.read({"Test": True})
-    [{'Test': True, 'New Field': True}]
-    >>> db.delete({"Test": True})
+    >>> db.read("Users")
+    [{'name': 'Tony Smith', 'age': 42, 'email': 'john.smith@gmail.com', 'active': False, 'score': 0.5}]
+    >>> db.delete("Users", {'name': 'Tony Smith'})
     True
-    >>> db.read({"Test": True})
+    >>> db.read("Users")
     []
     """
     load_dotenv()
