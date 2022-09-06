@@ -10,7 +10,7 @@ from app.validation import default_query, default_update, default_user
 
 API = FastAPI(
     title="BloomTech Labs DS API Template",
-    version="0.0.1",
+    version="0.0.2",
     docs_url="/",
 )
 API.db = MongoDB()
