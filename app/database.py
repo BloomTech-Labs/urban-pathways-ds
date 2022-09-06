@@ -51,7 +51,7 @@ class MongoDB:
         @param collection: str
         @param query: Dict
         @return: List[Dict] """
-        return list(self.collection().find(query, {"_id": False}))
+        return list(self.collection(collection).find(query, {"_id": False}))
 
     def update(self, collection: str, query: Dict, update_data: Dict) -> bool:
         """ Updates the matched records with new data

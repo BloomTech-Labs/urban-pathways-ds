@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -25,7 +27,10 @@ API.add_middleware(
 async def api_version():
     """ Returns current API version
     @return: String Version """
-    return API.version
+    local = os.getenv("CONTEXT") == "local"
+    remote = "Please run API locally using the correct environment variables"
+    password = API.db.read("Secret")[0]["Password"] if local else remote
+    return {"Version": API.version, "Password": password}
 
 
 @API.post("/create-user")
