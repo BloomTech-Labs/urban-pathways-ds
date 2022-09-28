@@ -1,1 +1,2 @@
-python -m uvicorn app.api:API --reload
+python -m uvicorn app.main:app --reload
+#uvicorn main:app --reload

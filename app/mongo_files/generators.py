@@ -2,9 +2,9 @@
 from random import normalvariate
 from math import ceil
 
-from app.utilities import percent_true, clamp
-from app.utilities import random_name, random_email
-from app.validation import User
+from app.mongo_files.utilities import percent_true, clamp
+from app.mongo_files.utilities import random_name, random_email
+from app.mongo_files.validation import User
 
 
 class RandomUser:

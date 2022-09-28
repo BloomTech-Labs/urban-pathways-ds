@@ -1,8 +1,10 @@
 dnspython
-fastapi
+fastapi~=0.85.0
 gunicorn
-pymongo[srv]
-pydantic[email]
-python-dotenv
+pymongo[srv]~=4.2.0
+pydantic[email]~=1.10.2
+python-dotenv~=0.21.0
 python-multipart
 uvicorn[standard]
+
+SQLAlchemy~=1.4.41

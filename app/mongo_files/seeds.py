@@ -1,6 +1,6 @@
 """ Run this script to reset and reseed the database """
-from app.database import MongoDB
-from app.generators import RandomUser
+from app.mongo_files.database import MongoDB
+from app.mongo_files.generators import RandomUser
 
 
 def reset_database(mongo: MongoDB) -> bool:
