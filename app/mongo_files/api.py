@@ -1,11 +1,9 @@
 import os
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-from app.database import MongoDB
-from app.validation import User, UserQuery, UserUpdate
-from app.validation import default_query, default_update, default_user
+from app.mongo_files.database import MongoDB
+from app.mongo_files.validation import User, UserQuery, UserUpdate
+from app.mongo_files.validation import default_query, default_update, default_user
 
 
 API = FastAPI(
@@ -13,7 +11,9 @@ API = FastAPI(
     version="0.0.2",
     docs_url="/",
 )
+
 API.db = MongoDB()
+
 API.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -69,3 +69,4 @@ async def delete_users(user_query: UserQuery = default_query):
     @param user_query: UserQuery
     @return: Boolean Success """
     return API.db.delete("Users", user_query.dict(exclude_none=True))
+
