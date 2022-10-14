@@ -8,6 +8,7 @@ Base = declarative_base()
 engine = create_engine(
     url=os.getenv("SQL_DB_URL", default="sqlite:///:memory:"),
     connect_args={"check_same_thread": False},
+    pool_pre_ping=True,
 )
 
 SessionLocal = sessionmaker(autoflush=False, bind=engine)
