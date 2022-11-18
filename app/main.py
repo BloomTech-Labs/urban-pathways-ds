@@ -1,23 +1,24 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, File, UploadFile
 from sqlalchemy.orm import Session
 from typing import List, Dict
-from app.table_models import User
-from app.schema import SchemaUser
+from app.table_models import User, Awards
+from app.schema import SchemaUser, SchemaAwards
 from app.services import (get_db,
                           create_database,
                           create_user,
-                          read_users,
+                          read_awards,
                           read_first,
                           update_user,
-                          delete_user)
+                          delete_user,
+                          save_awards_data)
+
+create_database()
 
 app = FastAPI(
     title="Urban Pathways DS API",
     version="0.0.0",
     docs_url="/"
 )
-
-create_database()
 
 
 @app.get("/version/")
@@ -37,9 +38,9 @@ def create_user_endpoint(user: SchemaUser, db: Session = Depends(get_db)):
         return create_user(db=db, user=user)
 
 
-@app.get("/read-users/", response_model=List[SchemaUser])
+@app.get("/read-awards/", response_model=List[SchemaAwards])
 def read_users_endpoint(db: Session = Depends(get_db)):
-    return read_users(db=db)
+    return read_awards(db=db)
 
 
 @app.patch("/update/user/{profile_id}")
@@ -54,3 +55,9 @@ def update_users_endpoint(
 @app.delete("/delete/user/{profile_id}")
 def delete_user_endpoint(profile_id: str, db: Session = Depends(get_db)):
     return delete_user(db=db, profile_id=profile_id)
+
+
+@app.post("/upload-file")
+def create_upload_file(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    """Allows to upload files"""
+    return save_awards_data(db, file)
