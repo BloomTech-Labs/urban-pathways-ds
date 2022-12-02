@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 from typing import List, Dict
 from app.table_models import OnepointUser, AwardsUser
@@ -14,13 +14,13 @@ from app.services import (get_db,
                           nuclear_launch_detected,
                           read_awards_users)
 
+create_database()
+
 app = FastAPI(
     title="Urban Pathways DS API",
     version="0.0.0",
     docs_url="/"
 )
-
-create_database()
 
 
 @app.get("/version/")
@@ -50,6 +50,11 @@ def read_awards_users_endpoint(db: Session = Depends(get_db)):
     return read_awards_users(db=db)
 
 
+@app.post("/read-workbook")
+async def read_workbook(file: UploadFile):
+    return {read_xls(file=file)}
+
+
 @app.patch("/update/user/{profile_id}")
 def update_users_endpoint(
         profile_id: str,
@@ -65,13 +70,15 @@ def delete_user_endpoint(profile_id: str, db: Session = Depends(get_db)):
 
 
 @app.post("/populate/")
-def populate_users_endpoint(filepath1: str, filepath2: str, db: Session = Depends(get_db)):
-    if filepath1[-4:] == ".xls":
-        read_xls(filepath=filepath1, db=db)
-        read_xlsx(filepath=filepath2, db=db)
-    elif filepath1[-4:] == "xlsx":
-        read_xls(filepath=filepath2, db=db)
-        read_xlsx(filepath=filepath1, db=db)
+def populate_users_endpoint(file1: UploadFile = File(...),
+                            file2: UploadFile = File(...),
+                            db: Session = Depends(get_db)):
+    if file1.filename[-4:] == ".xls":
+        read_xls(file=file1, db=db)
+        read_xlsx(file=file2, db=db)
+    elif file1.filename[-4:] == "xlsx":
+        read_xls(file=file2, db=db)
+        read_xlsx(file=file1, db=db)
 
 
 @app.delete("/nuke")

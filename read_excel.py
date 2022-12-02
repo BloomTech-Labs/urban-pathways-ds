@@ -1,9 +1,15 @@
-import sys
+import os
+from io import BytesIO
+import shutil
+from mmap import mmap
+from pathlib import Path
+from tempfile import NamedTemporaryFile
+from typing import Callable
 
 import openpyxl
 import pandas as pd
 import xlrd
-import sys
+from fastapi import UploadFile, File
 from sqlalchemy.orm import Session
 from app.table_models import OnepointUser, AwardsUser
 
@@ -12,60 +18,58 @@ from app.table_models import OnepointUser, AwardsUser
 # onesite_fp = "fixtures/Urban_Pathways-Aug_2022_All_Delq-PP.xls"
 
 
-def read_xls(filepath: str, db: Session):
-    workbook = xlrd.open_workbook(filepath)
-    worksheet = workbook.sheet_by_name("All")
-    num_rows = worksheet.nrows - 1
-    curr_row = 3
-    while curr_row < num_rows:
-        curr_row += 1
-        row = worksheet.row(curr_row)
-        values = [item.value for item in row]
-        op_user = OnepointUser(
-            property=values[0],
-            resh_id=values[1],
-            lease_id=values[2],
-            bldg_unit=values[3],
-            name=values[4],
-            phone_number=values[5],
-            email=values[6],
-            status=values[7],
-            move_in_out=values[8],
-            code_description=values[9],
-            total_prepaid=values[10],
-            total_delinquent=values[11],
-            d=values[12],
-            o=values[13],
-            net_balance=values[14],
-            current=values[15],
-            days_30=values[16],
-            days_60=values[17],
-            days_90_plus=values[18],
-            prorate_credit=values[19],
-            deposits_held=values[20],
-            outstanding_deposit=values[21],
-            late=values[22],
-            nsf=values[23],
-            delinquency_comment=values[24],
-            comment_date=values[25],
-            leasing_agent=values[26],
-        )
-        db.add(op_user)
-    db.commit()
-
-#
-# def read_xlsx(filepath: str):
-#     workbook = openpyxl.load_workbook(filepath)
-#     ws = workbook.active
-#     num_rows = ws.
-#     values = [value for row in ws.values for value in row]
-#     print(values[0:2000])
+def read_xls(file: UploadFile):
+    filepath = os.path.realpath(os.path.join("fixtures", file.filename))
+    # fp = file.
+    with open(file.filename, "r+b") as f:
+        mm = mmap(f.fileno(), 0)
+        workbook = xlrd.open_workbook(file_contents=mm, formatting_info=True)
+        worksheet = workbook.sheet_by_name("All")
+        # num_rows = worksheet.nrows - 1
+        # curr_row = 3
+        # while curr_row < num_rows:
+        #     curr_row += 1
+        #     row = worksheet.row(curr_row)
+        #     values = [item.value for item in row]
+        #     op_user = OnepointUser(
+        #         property=values[0],
+        #         resh_id=values[1],
+        #         lease_id=values[2],
+        #         bldg_unit=values[3],
+        #         name=values[4],
+        #         phone_number=values[5],
+        #         email=values[6],
+        #         status=values[7],
+        #         move_in_out=values[8],
+        #         code_description=values[9],
+        #         total_prepaid=values[10],
+        #         total_delinquent=values[11],
+        #         d=values[12],
+        #         o=values[13],
+        #         net_balance=values[14],
+        #         current=values[15],
+        #         days_30=values[16],
+        #         days_60=values[17],
+        #         days_90_plus=values[18],
+        #         prorate_credit=values[19],
+        #         deposits_held=values[20],
+        #         outstanding_deposit=values[21],
+        #         late=values[22],
+        #         nsf=values[23],
+        #         delinquency_comment=values[24],
+        #         comment_date=values[25],
+        #         leasing_agent=values[26],
+        #     )
+        #     db.add(op_user)
+        # db.commit()
+        return print(*worksheet)
 
 
-def read_xlsx(filepath: str, db: Session):
+def read_xlsx(db: Session, file: UploadFile = File(...)):
+    filepath = os.path.realpath(os.path.join("fixtures", file.filename))
     workbook = openpyxl.load_workbook(filepath)
     worksheet = workbook.active
-    rows = worksheet.iter_rows(13, 300, 0, 43, values_only=True)
+    rows = worksheet.iter_rows(13, 3000, 0, 43, values_only=True)
     values = [row for row in rows]
     for row in values:
         if row[0] is None:
@@ -120,13 +124,14 @@ def read_xlsx(filepath: str, db: Session):
         db.commit()
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # pandas_read_xls("fixtures/Urban_Pathways-Aug_2022_All_Delq-PP.xls")
-    # read_xlsx("fixtures/AWARDS Rent Arrears Plan Summary - 7.1.22_8.31.22.xlsx")
-
-    import requests
-    q = requests.get("http://127.0.0.1:8000/")
-    op_users = requests.get("http://127.0.0.1:8000/read-onepoint-users/")
-    a_users = requests.get("http://127.0.0.1:8000/read-awards-users/")
-    print(op_users.json())
-    print(a_users.json())
+    # path = os.path.realpath("fixtures")
+    # print(save_upload_file(UploadFile("AWARDS Rent Arrears Plan Summary - 7.1.22_8.31.22.xlsx")))
+    #
+    # import requests
+    # q = requests.get("http://127.0.0.1:8000/")
+    # op_users = requests.get("http://127.0.0.1:8000/read-onepoint-users/")
+    # a_users = requests.get("http://127.0.0.1:8000/read-awards-users/")
+    # print(op_users.json())
+    # print(a_users.json())
