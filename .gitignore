@@ -23,3 +23,4 @@ Pipfile.lock
 
 **/.DS_Store
 /notebooks/.ipynb_checkpoints/
+database.db

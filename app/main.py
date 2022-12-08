@@ -1,23 +1,25 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, File, UploadFile
 from sqlalchemy.orm import Session
 from typing import List, Dict
-from app.table_models import User
-from app.schema import SchemaUser
+from app.table_models import User, OneSiteData
+from app.schema import SchemaUser, SchemaCreateOnesiteDB
 from app.services import (get_db,
                           create_database,
                           create_user,
                           read_users,
                           read_first,
                           update_user,
-                          delete_user)
+                          delete_user,
+                          save_onesite_data)
+
+
+create_database()
 
 app = FastAPI(
     title="Urban Pathways DS API",
     version="0.0.0",
     docs_url="/"
 )
-
-create_database()
 
 
 @app.get("/version/")
@@ -54,3 +56,8 @@ def update_users_endpoint(
 @app.delete("/delete/user/{profile_id}")
 def delete_user_endpoint(profile_id: str, db: Session = Depends(get_db)):
     return delete_user(db=db, profile_id=profile_id)
+
+
+@app.post("/upload/onesite/data/") 
+def create_onesite_endpoint(file: UploadFile = File(...), db: Session = Depends(get_db)): 
+    return save_onesite_data(db, file)
