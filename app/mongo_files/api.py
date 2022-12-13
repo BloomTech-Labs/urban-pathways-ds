@@ -69,14 +69,3 @@ async def delete_users(user_query: UserQuery = default_query):
     @param user_query: UserQuery
     @return: Boolean Success """
     return API.db.delete("Users", user_query.dict(exclude_none=True))
-
-
-@API.post("/files")
-async def create_file(file: bytes = File()):
-    return {"file_size": len(file)}
-
-# @API.post("/upload-file")
-# async def create_upload_file(file: UploadFile):
-#     """Allows to upload files"""
-#     awards_file = file
-#     return {"filename": file.filename}

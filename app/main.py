@@ -57,7 +57,7 @@ def delete_user_endpoint(profile_id: str, db: Session = Depends(get_db)):
     return delete_user(db=db, profile_id=profile_id)
 
 
-@app.post("/upload-file")
+@app.post("/upload-awards-file")
 def create_upload_file(file: UploadFile = File(...), db: Session = Depends(get_db)):
     """Allows to upload files"""
     return save_awards_data(db, file)

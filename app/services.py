@@ -1,3 +1,5 @@
+from io import BytesIO
+
 import openpyxl as openpyxl
 from sqlalchemy.orm import Session
 from app.database import SessionLocal, Base, engine
@@ -57,10 +59,10 @@ def delete_user(db: Session, profile_id: str):
 
 
 def save_awards_data(db: Session, f: UploadFile = File(...)):
-    f = os.path.realpath(os.path.join("fixtures", f.filename))
-    awards_file = openpyxl.load_workbook(f)
+    awards_file = openpyxl.load_workbook(BytesIO(f.file.read()))
     awards_sheet = awards_file.active
-    rows = awards_sheet.iter_rows(13, 3000, 0, 43, values_only=True)
+    max_rows = awards_sheet.max_row
+    rows = awards_sheet.iter_rows(13, max_rows, 0, 43, values_only=True)
     values = [row for row in rows]
     for row in values:
         if row[0] is None:
@@ -125,12 +127,3 @@ def remove_multiple_periods(text):
         text = text.replace("..", ".")
     text = text.replace("$", "")
     return float(text)
-
-
-
-if __name__ == '__main__':
-    import requests
-
-    q = requests.get("http://127.0.0.1:8000/")
-    op_users = requests.get("http://127.0.0.1:8000/read-awards/")
-    print(op_users.json())
