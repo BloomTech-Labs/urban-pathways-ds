@@ -23,4 +23,10 @@ Pipfile.lock
 
 **/.DS_Store
 /notebooks/.ipynb_checkpoints/
+<<<<<<< HEAD
 database.db
+=======
+
+#Ignore db
+*.db
+>>>>>>> 62402d8ecfd69f16ab2f0902bd6a3017003fc220
