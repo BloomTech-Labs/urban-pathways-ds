@@ -9,6 +9,7 @@ from fastapi import File, UploadFile
 import xlrd as xlrd
 import os
 from io import BytesIO
+import mmap
 
 
 def get_db():
@@ -59,9 +60,14 @@ def delete_user(db: Session, profile_id: str):
     return f"User {profile_id} has been deleted"
 
 
-def save_onesite_data(db: Session, file: UploadFile = File(...)):
-    filepath = os.path.realpath(os.path.join("fixtures", file.filename))
-    excel_workbook = xlrd.open_workbook(filepath)
+def mmap_read(f: UploadFile = File(...)):
+    with mmap.mmap(f.file.fileno(), length=0, access=mmap.ACCESS_READ) as m:
+        content = m.read()
+        return content
+
+
+def save_onesite_data(db: Session, f: UploadFile = File(...)):
+    excel_workbook = xlrd.open_workbook(file_contents=mmap_read(f), formatting_info=True)
     all_worksheet = excel_workbook.sheet_by_name("All")
     curr_worksheet = excel_workbook.sheet_by_name("Curr")
     curr_row = 3
@@ -101,7 +107,7 @@ def save_onesite_data(db: Session, file: UploadFile = File(...)):
         db.add(db_OneSite)
         db.commit()
 
-    return {"You've successfully loaded":file.filename}
+    return {"You've successfully loaded":f.filename}
     
     
 def save_awards_data(db: Session, f: UploadFile = File(...)):
