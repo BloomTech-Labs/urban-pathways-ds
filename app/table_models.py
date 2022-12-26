@@ -1,4 +1,4 @@
-from sqlalchemy import String, Column, DateTime, Integer, Float
+from sqlalchemy import String, Column, Float, Integer, DateTime
 from app.database import Base
 
 
@@ -67,3 +67,5 @@ class Awards(Base):
     start_date_of_payment_plan = Column(DateTime, index=True)
     repayment_plan_amount = Column(String, index=True)
     rent_arrears_plan_note = Column(String, index=True)
+
+

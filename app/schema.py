@@ -2,6 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, constr, EmailStr
 from typing import Optional
+from datetime import datetime
 
 from sqlalchemy import DateTime
 

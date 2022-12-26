@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.mongo_files.database import MongoDB
 from app.mongo_files.validation import User, UserQuery, UserUpdate
@@ -69,3 +69,4 @@ async def delete_users(user_query: UserQuery = default_query):
     @param user_query: UserQuery
     @return: Boolean Success """
     return API.db.delete("Users", user_query.dict(exclude_none=True))
+
