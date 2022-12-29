@@ -2,16 +2,17 @@ from sqlalchemy import String, Column, Integer
 from app.database import Base
 
 
-class OnepointUser(Base):
-    __tablename__ = "one_point_users"
+class OneSiteUser(Base):
+    __tablename__ = "one_site"
     profile_id = Column(
         Integer,
-        primary_key=True,
         unique=True,
         nullable=False,
         index=True,
+        primary_key=True,
 
     )
+    username = Column(String, index=True, nullable=False, unique=True)
     property = Column(String, index=True)
     resh_id = Column(String, index=True)
     lease_id = Column(String, index=True)
@@ -40,9 +41,39 @@ class OnepointUser(Base):
     comment_date = Column(String, index=True, nullable=True)
     leasing_agent = Column(String, index=True, nullable=True)
 
+    def __iter__(self):
+        yield "profile_id", self.profile_id
+        yield "property", self.property
+        yield "resh_id", self.resh_id
+        yield "lease_id", self.lease_id
+        yield "bldg_unit", self.bldg_unit
+        yield "name", self.name
+        yield "phone_number", self.phone_number
+        yield "email", self.email
+        yield "status", self.status
+        yield "move_in_out", self.move_in_out
+        yield "code_description", self.code_description
+        yield "total_prepaid", self.total_prepaid
+        yield "total_delinquent", self.total_delinquent
+        yield "d", self.d
+        yield "o", self.o
+        yield "net_balance", self.net_balance
+        yield "current", self.current
+        yield "days_30", self.days_30
+        yield "days_60", self.days_60
+        yield "days_90_plus", self.days_90_plus
+        yield "prorate_credit", self.prorate_credit
+        yield "deposits_held", self.deposits_held
+        yield "outstanding_deposit", self.outstanding_deposit
+        yield "late", self.late
+        yield "nsf", self.nsf
+        yield "delinquency_comment", self.delinquency_comment
+        yield "comment_date", self.comment_date
+        yield "leasing_agent", self.leasing_agent
+
 
 class AwardsUser(Base):
-    __tablename__ = "awards_users"
+    __tablename__ = "awards"
     profile_id = Column(
         Integer,
         primary_key=True,
@@ -50,6 +81,7 @@ class AwardsUser(Base):
         nullable=False,
         index=True,
     )
+    username = Column(String, index=True, nullable=False, unique=True)
     program = Column(String, index=True)
     name = Column(String, index=True)
     rent_arrears_plan_form_date = Column(String, index=True, nullable=True)

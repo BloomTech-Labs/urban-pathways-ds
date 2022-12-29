@@ -1,83 +1,93 @@
-import os
+import mmap
 from io import BytesIO
-import shutil
-from mmap import mmap
-from pathlib import Path
-from tempfile import NamedTemporaryFile
-from typing import Callable
-
 import openpyxl
-import pandas as pd
 import xlrd
+from xlrd.sheet import Sheet
 from fastapi import UploadFile, File
+from sqlalchemy.dialects.sqlite import insert
 from sqlalchemy.orm import Session
-from app.table_models import OnepointUser, AwardsUser
+from app.table_models import OneSiteUser, AwardsUser
 
 
-# awards_fp = "fixtures/AWARDS Rent Arrears Plan Summary - 7.1.22_8.31.22.xlsx"
-# onesite_fp = "fixtures/Urban_Pathways-Aug_2022_All_Delq-PP.xls"
+def make_names_uniform(name: str) -> str:
+    if "," in name:
+        return " ".join(reversed(name.split(",")))
+    else:
+        return name
 
 
-def read_xls(file: UploadFile):
-    filepath = os.path.realpath(os.path.join("fixtures", file.filename))
-    # fp = file.
-    with open(file.filename, "r+b") as f:
-        mm = mmap(f.fileno(), 0)
-        workbook = xlrd.open_workbook(file_contents=mm, formatting_info=True)
-        worksheet = workbook.sheet_by_name("All")
-        # num_rows = worksheet.nrows - 1
-        # curr_row = 3
-        # while curr_row < num_rows:
-        #     curr_row += 1
-        #     row = worksheet.row(curr_row)
-        #     values = [item.value for item in row]
-        #     op_user = OnepointUser(
-        #         property=values[0],
-        #         resh_id=values[1],
-        #         lease_id=values[2],
-        #         bldg_unit=values[3],
-        #         name=values[4],
-        #         phone_number=values[5],
-        #         email=values[6],
-        #         status=values[7],
-        #         move_in_out=values[8],
-        #         code_description=values[9],
-        #         total_prepaid=values[10],
-        #         total_delinquent=values[11],
-        #         d=values[12],
-        #         o=values[13],
-        #         net_balance=values[14],
-        #         current=values[15],
-        #         days_30=values[16],
-        #         days_60=values[17],
-        #         days_90_plus=values[18],
-        #         prorate_credit=values[19],
-        #         deposits_held=values[20],
-        #         outstanding_deposit=values[21],
-        #         late=values[22],
-        #         nsf=values[23],
-        #         delinquency_comment=values[24],
-        #         comment_date=values[25],
-        #         leasing_agent=values[26],
-        #     )
-        #     db.add(op_user)
-        # db.commit()
-        return print(*worksheet)
+def mmap_io(f: UploadFile = File(...)):
+    with mmap.mmap(f.file.fileno(), length=0, access=mmap.ACCESS_READ) as mmap_obj:
+        text = mmap_obj.read()
+        return text
+
+
+def upload_xls_worksheet(db: Session, ws: Sheet):
+    curr_row = 3
+    num_rows = ws.nrows - 1
+    while curr_row < num_rows:
+        curr_row += 1
+        row = ws.row_values(curr_row)
+        user = dict(
+            username="-".join([row[4], row[3]]),
+            property=row[0],
+            resh_id=row[1],
+            lease_id=row[2],
+            bldg_unit=row[3],
+            name=make_names_uniform(row[4]),
+            phone_number=row[5],
+            email=row[6],
+            status=row[7],
+            move_in_out=row[8],
+            code_description=row[9],
+            total_prepaid=row[10],
+            total_delinquent=row[11],
+            d=row[12],
+            o=row[13],
+            net_balance=row[14],
+            current=row[15],
+            days_30=row[16],
+            days_60=row[17],
+            days_90_plus=row[18],
+            prorate_credit=row[19],
+            deposits_held=row[20],
+            outstanding_deposit=row[21],
+            late=row[22],
+            nsf=row[23],
+            delinquency_comment=row[24],
+            comment_date=row[25],
+            leasing_agent=row[26],
+        )
+        stmt = insert(OneSiteUser).values(user)
+        upsert_stmt = stmt.on_conflict_do_update(
+            index_elements=[OneSiteUser.username],
+            set_=user,
+        )
+        db.execute(upsert_stmt)
+    db.commit()
+
+
+def read_xls(db: Session, file: UploadFile = File(...)):
+    workbook = xlrd.open_workbook(file_contents=mmap_io(file), formatting_info=True)
+    all_ws = workbook.sheet_by_name("All")
+    curr_ws = workbook.sheet_by_name("Curr")
+    upload_xls_worksheet(db, curr_ws)
+    upload_xls_worksheet(db, all_ws)
 
 
 def read_xlsx(db: Session, file: UploadFile = File(...)):
-    filepath = os.path.realpath(os.path.join("fixtures", file.filename))
-    workbook = openpyxl.load_workbook(filepath)
+    workbook = openpyxl.load_workbook(filename=BytesIO(file.file.read()))
     worksheet = workbook.active
-    rows = worksheet.iter_rows(13, 3000, 0, 43, values_only=True)
+    num_rows = worksheet.max_row
+    rows = worksheet.iter_rows(13, num_rows, 0, 43, values_only=True)
     values = [row for row in rows]
     for row in values:
         if row[0] is None:
             break
         else:
-            a_user = AwardsUser(
+            a_user = dict(
                 program=row[0],
-                name=row[1],
+                name=make_names_uniform(row[1]),
                 rent_arrears_plan_form_date=row[2],
                 total_client_arrears_90_plus_days_old=row[3],
                 arrears_plan=row[4],
@@ -119,19 +129,25 @@ def read_xlsx(db: Session, file: UploadFile = File(...)):
                 payment_plan_start_date=row[40],
                 repayment_plan_amount=row[41],
                 rent_arrears_plan_note=row[42],
+                username="-".join([row[1], row[0], row[4]])
             )
-            db.add(a_user)
+            stmt = insert(AwardsUser).values(a_user)
+            upsert_stmt = stmt.on_conflict_do_update(
+                index_elements=[AwardsUser.username],
+                set_=a_user
+            )
+            db.execute(upsert_stmt)
         db.commit()
 
 
-# if __name__ == '__main__':
-    # pandas_read_xls("fixtures/Urban_Pathways-Aug_2022_All_Delq-PP.xls")
-    # path = os.path.realpath("fixtures")
-    # print(save_upload_file(UploadFile("AWARDS Rent Arrears Plan Summary - 7.1.22_8.31.22.xlsx")))
-    #
-    # import requests
-    # q = requests.get("http://127.0.0.1:8000/")
-    # op_users = requests.get("http://127.0.0.1:8000/read-onepoint-users/")
-    # a_users = requests.get("http://127.0.0.1:8000/read-awards-users/")
-    # print(op_users.json())
-    # print(a_users.json())
+if __name__ == '__main__':
+    import requests
+    import pandas as pd
+
+    result = requests.get("http://127.0.0.1:8000/read-onesite-users/").json()
+    pd.set_option('display.max_columns', None)
+    pd.set_option('display.max_rows', None)
+    pd.set_option('display.max_colwidth', None)
+    answer = [entry["name"] for entry in result]
+    df = pd.Series(answer)
+    print(df)

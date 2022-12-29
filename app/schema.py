@@ -7,7 +7,7 @@ class OrmMode(BaseModel):
         orm_mode = True
 
 
-class SchemaOnePoint(OrmMode):
+class SchemaOneSite(OrmMode):
     profile_id: int
     property: str
     resh_id: str
