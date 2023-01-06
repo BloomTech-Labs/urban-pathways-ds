@@ -18,11 +18,6 @@ class SchemaUser(OrmMode):
     email: EmailStr
 
 
-class SchemaUpdateUser(OrmMode):
-    name: Optional[constr(max_length=255)]
-    email: Optional[EmailStr]
-
-
 class SchemaAwards(OrmMode):
     profile_id: int
     program: str
