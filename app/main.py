@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, File, UploadFile
 from sqlalchemy.orm import Session
 from typing import List, Dict
-from app.table_models import User, Awards
+from app.table_models import User, Awards, OneSiteData
 from app.schema import SchemaUser, SchemaAwards
 from app.services import (get_db,
                           create_database,
@@ -10,7 +10,8 @@ from app.services import (get_db,
                           read_first,
                           update_user,
                           delete_user,
-                          save_awards_data)
+                          save_awards_data,
+                          save_onesite_data)
 
 create_database()
 
@@ -61,3 +62,16 @@ def delete_user_endpoint(profile_id: str, db: Session = Depends(get_db)):
 def create_upload_file(file: UploadFile = File(...), db: Session = Depends(get_db)):
     """Allows to upload files"""
     return save_awards_data(db, file)
+
+
+@app.post("/upload-onesite-file")
+async def onesite_upload_file_endpoint(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    return save_onesite_data(db, file)
+
+
+@app.delete("/nuke")
+def nuke_endpoint(db: Session = Depends(get_db)):
+    db.query(Awards).delete()
+    db.query(OneSiteData).delete()
+    db.commit()
+    return "DataBase Nuked!"
