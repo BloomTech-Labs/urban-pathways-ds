@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, File, UploadFile
 from sqlalchemy.orm import Session
 from typing import List
 from app.table_models import Awards, OneSiteData
-from app.schema import SchemaAwards, SchemaCreateOnesiteDB
+from app.schema import SchemaAwards, SchemaOnesite
 from app.services import (get_db,
                           create_database,
                           read_awards,
@@ -29,7 +29,7 @@ def read_users_endpoint(db: Session = Depends(get_db)):
     return read_awards(db=db)
 
 
-@app.get("/read-onesite/", response_model=List[SchemaCreateOnesiteDB])
+@app.get("/read-onesite/", response_model=List[SchemaOnesite])
 def read_onesite_endpoint(db: Session = Depends(get_db)):
     return read_onesite(db=db)
 
