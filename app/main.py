@@ -1,13 +1,14 @@
-from fastapi import FastAPI, Depends, HTTPException, File, UploadFile
+from fastapi import FastAPI, Depends, File, UploadFile
 from sqlalchemy.orm import Session
-from typing import List, Dict
-from app.table_models import User, Awards, OneSiteData
-from app.schema import SchemaUser, SchemaAwards, SchemaCreateOnesiteDB
+from typing import List
+from app.table_models import Awards, OneSiteData
+from app.schema import SchemaAwards, SchemaCreateOnesiteDB
 from app.services import (get_db,
                           create_database,
                           read_awards,
                           save_awards_data,
-                          save_onesite_data, read_onesite)
+                          save_onesite_data,
+                          read_onesite,)
 
 create_database()
 
