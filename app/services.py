@@ -31,34 +31,6 @@ def read_awards(db: Session):
     return db.query(Awards).all()
 
 
-def create_user(db: Session, user: SchemaUser):
-    db_user = User(
-        profile_id=user.profile_id,
-        name=user.name,
-        email=user.email,
-    )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
-
-
-def update_user(db: Session, profile_id: str, update_data: Dict) -> str:
-    db.query(User).filter(
-        User.profile_id == profile_id
-    ).update(update_data)
-    db.commit()
-    return f"User {profile_id} has been updated with {update_data}"
-
-
-def delete_user(db: Session, profile_id: str):
-    db.query(User).filter(
-        User.profile_id == profile_id
-    ).delete()
-    db.commit()
-    return f"User {profile_id} has been deleted"
-
-
 def save_onesite_data(db: Session, file: UploadFile = File(...)):
     filepath = os.path.realpath(os.path.join("fixtures", file.filename))
     excel_workbook = xlrd.open_workbook(filepath)
