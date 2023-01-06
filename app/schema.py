@@ -65,7 +65,7 @@ class SchemaAwards(OrmMode):
     rent_arrears_plan_note: Optional[str]
 
 
-class SchemaCreateOnesiteDB(OrmMode): 
+class SchemaOnesite(OrmMode):
     profile_id: int
     property: Optional[str]
     resh_id: Optional[str]

@@ -31,6 +31,10 @@ def read_awards(db: Session):
     return db.query(Awards).all()
 
 
+def read_onesite(db: Session):
+    return db.query(OneSiteData).all()
+
+
 def save_onesite_data(db: Session, file: UploadFile = File(...)):
     filepath = os.path.realpath(os.path.join("fixtures", file.filename))
     excel_workbook = xlrd.open_workbook(filepath)
@@ -38,8 +42,8 @@ def save_onesite_data(db: Session, file: UploadFile = File(...)):
     curr_worksheet = excel_workbook.sheet_by_name("Curr")
     curr_row = 3
 
-    while curr_row < curr_worksheet.nrows-1:
-        curr_row += 1 
+    while curr_row < curr_worksheet.nrows - 1:
+        curr_row += 1
         row = curr_worksheet.row_values(curr_row)
         db_OneSite = OneSiteData(
             property=row[0],
@@ -54,8 +58,8 @@ def save_onesite_data(db: Session, file: UploadFile = File(...)):
             code=row[9],
             tot_prepay=row[10],
             tot_delq=row[11],
-            D =row[12],
-            O =row[13],
+            D=row[12],
+            O=row[13],
             net_bal=row[14],
             current=row[15],
             thirty_day=row[16],
@@ -73,11 +77,11 @@ def save_onesite_data(db: Session, file: UploadFile = File(...)):
         db.add(db_OneSite)
         db.commit()
 
-    return {"You've successfully loaded":file.filename}
-    
-    
-def save_awards_data(db: Session, f: UploadFile = File(...)):
-    awards_file = openpyxl.load_workbook(BytesIO(f.file.read()))
+    return {"You've successfully loaded": file.filename}
+
+
+def save_awards_data(db: Session, file: UploadFile = File(...)):
+    awards_file = openpyxl.load_workbook(BytesIO(file.file.read()))
     awards_sheet = awards_file.active
     max_rows = awards_sheet.max_row
     rows = awards_sheet.iter_rows(13, max_rows, 0, 43, values_only=True)
@@ -90,7 +94,7 @@ def save_awards_data(db: Session, f: UploadFile = File(...)):
                 program=row[0],
                 name=row[1],
                 rent_arrears_plan_form_date=row[2],
-                total_client_arrears_90_plus_days_old = remove_multiple_periods(row[3]),
+                total_client_arrears_90_plus_days_old=remove_multiple_periods(row[3]),
                 arrears_plan=row[4],
                 erap_application_submitted=row[5],
                 erap_application_date=row[6],
@@ -134,6 +138,7 @@ def save_awards_data(db: Session, f: UploadFile = File(...)):
             )
             db.add(a_users)
         db.commit()
+    return {"You've successfully loaded": file.filename}
 
 
 def remove_multiple_periods(text):
