@@ -150,4 +150,4 @@ if __name__ == '__main__':
     pd.set_option('display.max_colwidth', None)
     answer = [entry["name"] for entry in result]
     df = pd.Series(answer)
-    print(df)
+    print(df.value_counts())
