@@ -8,3 +8,5 @@ python-multipart
 uvicorn[standard]
 
 SQLAlchemy~=1.4.41
+
+xlrd
