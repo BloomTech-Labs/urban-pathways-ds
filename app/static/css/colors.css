@@ -1,0 +1,112 @@
+:root {
+    color-scheme: dark;
+}
+
+body {
+    background-color: #2b2b2b;
+}
+
+p {
+    color: #aaaaaa;
+}
+
+strong, b {
+    color: #777777;
+}
+
+em, i {
+    color: #bbbbbb;
+}
+
+a, a:link, a:visited {
+    color: #8888c6;
+}
+
+nav {
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+    background-color: #252525;
+}
+
+nav a, nav a:link, nav a:active, nav a:visited {
+    color: #aaaaaa;
+}
+
+nav a:hover {
+    color: #eeeeee;
+}
+
+h1, h2, h3, h5 {
+    color: #aaaaaa;
+}
+
+h4 {
+    color: #F0E68C;
+}
+
+header h1 a:link, header h1 a:active,
+header h1 a:visited, header h1 a:hover {
+    color: #dddddd;
+}
+
+blockquote {
+    background-color: #252525;
+    border: 1px solid #000;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+blockquote p {
+    color: #6a8759;
+}
+
+blockquote cite {
+    color: #8888c6;
+}
+
+article h1 {
+    color: #cca76e;
+}
+
+article li {
+    color: #aaaaaa;
+}
+
+footer {
+    background-color: #252525;
+    border-top: 1px solid #000;
+}
+
+footer p {
+    color: #777777;
+}
+
+h2.subhead {
+    color: #dddddd;
+}
+
+button, form input::file-selector-button {
+    border: 1px solid #111111;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+button:hover, form input::file-selector-button:hover {
+    color: #333;
+    border: 1px solid #eee;
+    background-color: #aaa;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+article table th {
+    color: #dddddd;
+    border-bottom: 1px solid #111111;
+}
+
+article table td {
+    color: #aaaaaa;
+    border-bottom: 1px solid #111111;
+}
+
+#graph canvas {
+    border: 1px solid #000;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+}

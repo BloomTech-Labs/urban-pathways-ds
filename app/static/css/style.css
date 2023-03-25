@@ -1,0 +1,262 @@
+body {
+    margin-bottom: 60px;
+}
+
+p {
+    font-family: Monaco, sans-serif;
+    font-size: 0.9em;
+    margin: 20px 100px;
+    line-height: 1.5em;
+    text-align: left;
+}
+
+a, a:link, a:visited {
+    font-family: Monaco, sans-serif;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+a:active, a:hover {
+    text-decoration: none;
+}
+
+nav {
+    margin: 20px 0;
+    padding: 10px 60px;
+}
+
+nav a, nav a:link, nav a:active, nav a:visited {
+    margin-right: 30px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+nav a:hover {
+    text-decoration: none;
+}
+
+h1, h2, h3, h4, h5 {
+    margin: 20px 100px;
+    font-family: Monaco, sans-serif;
+    line-height: 1.55em;
+}
+
+h1 {
+    font-size: 2em;
+}
+
+h2 {
+    font-size: 1.8em;
+}
+
+h3 {
+    font-size: 1.6em;
+}
+
+h4 {
+    font-size: 1.4em;
+}
+
+h5 {
+    font-size: 1.2em;
+}
+
+header h1 {
+    font-size: 3em;
+    margin: 40px 60px;
+    white-space: nowrap;
+}
+
+header h1 a:link, header h1 a:active,
+header h1 a:visited, header h1 a:hover {
+    font-family: Arial, sans-serif;
+    text-decoration: none;
+}
+
+blockquote {
+    margin: 40px 100px;
+    padding: 20px;
+    width: 768px;
+}
+
+blockquote p {
+    font-size: 1em;
+    font-family: Monaco, sans-serif;
+    margin: 0 0 1.4em;
+}
+
+blockquote cite {
+    font-style: italic;
+    display: block;
+    text-align: right;
+    width: 98%;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+blockquote cite:before {
+    content: "~ ";
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+article {
+    margin: 40px 0 100px 0;
+}
+
+article h1 {
+    margin: 40px 60px 20px;
+    font-size: 2em;
+}
+
+article ul {
+    margin: 0 0 20px 0;
+}
+
+article ol {
+    margin: 0 0 20px 10px;
+}
+
+article li {
+    font-family: Monaco, sans-serif;
+    font-size: 1em;
+    margin: 3px 120px;
+}
+
+footer {
+    position: fixed;
+    width: 100%;
+    height: 40px;
+    bottom: 0;
+}
+
+footer p {
+    font-family: Monaco, sans-serif;
+    font-size: .9em;
+    margin: 10px 60px;
+}
+
+.right {
+    float: right;
+}
+
+.left {
+    float: left;
+}
+
+.clear {
+    clear: both;
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
+h2.subhead {
+    margin-bottom: 20px;
+}
+
+form {
+    width: 400px;
+    margin: 40px 0 40px 100px;
+    padding: 20px 40px;
+}
+
+form h1, form h2, form h3, form h4, form h5 {
+    margin: 0 0 7px 0;
+}
+
+form p {
+    margin: 0 0 20px 0;
+}
+
+form input {
+    width: 140px;
+    margin: 3px 20px 0 5px;
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+form input[type=checkbox] {
+    cursor: pointer;
+    width: 40px;
+    margin: 5px -10px 0 0;
+}
+
+form input[type=radio] {
+    cursor: pointer;
+    width: 164px;
+}
+
+form input[type=file] {
+    cursor: pointer;
+    width: 210px;
+    margin: 2px 20px 0 0;
+    padding: 6px 20px;
+    border: 1px solid;
+    color: #aaaaaa;
+}
+
+form input[type=file]::file-selector-button {
+    padding: 3px 0;
+    width: 100px;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-top: -1px;
+}
+
+form select {
+    width: 164px;
+    margin: 3px 20px 0 5px;
+    cursor: pointer;
+    padding: 0 8px;
+    float: right;
+}
+
+button {
+    padding: 3px 0;
+    width: 167px;
+    cursor: pointer;
+    margin-right: 19px;
+    margin-top: 2px;
+    border-radius: 3px;
+    float: none;
+}
+
+form button[type=submit] {
+    margin: 10px 0 0 0;
+}
+
+form textarea {
+    margin: 20px 0 40px 100px;
+    width: 500px;
+    height: 200px;
+}
+
+article table {
+    font-size: 13px;
+    text-align: left;
+    margin: 40px 0 0 82px;
+}
+
+article table th {
+    padding: 5px 20px 5px 20px;
+    text-align: left;
+}
+
+article table td {
+    padding: 5px 20px 5px 20px;
+}
+
+#chart {
+    margin: 50px 0 20px 100px;
+}
+
+.vega-embed summary {
+    display: none;
+}
+
+form.vega-bindings {
+    display: none;
+}

@@ -1,54 +1,47 @@
-from fastapi import FastAPI, Depends, UploadFile, File
-from sqlalchemy.orm import Session
-from typing import List
-from app.schema import SchemaOneSite, SchemaAwards
-from read_excel import read_xls, read_xlsx
-from app.services import (get_db,
-                          create_database,
-                          read_onesite_users,
-                          nuclear_launch_detected,
-                          read_awards_users,)
-
-create_database()
-
-app = FastAPI(
-    title="Urban Pathways DS API",
-    version="0.0.0",
-    docs_url="/"
-)
+import os
+import shutil
+from flask import Flask, render_template, request, send_file
+from app.services import read_xlsx, read_xls, fuzzy_merge_export
 
 
-@app.get("/version/")
-def version_endpoint():
-    return {app.version}
+app = Flask(__name__)
+
+cache_path = os.path.abspath(os.path.join("app", "csv"))
+if os.path.exists(cache_path):
+    shutil.rmtree(cache_path)
+
+os.mkdir(cache_path)
 
 
-@app.get("/read-onesite-users/", response_model=List[SchemaOneSite])
-def read_onesite_users_endpoint(db: Session = Depends(get_db)):
-    return read_onesite_users(db=db)
-
-
-@app.get("/read-awards-users/", response_model=List[SchemaAwards])
-def read_awards_users_endpoint(db: Session = Depends(get_db)):
-    return read_awards_users(db=db)
-
-
-@app.post("/upload-onesite-data")
-async def upload_onesite_data_endpoint(
-        file: UploadFile = File(...),
-        db: Session = Depends(get_db)
-):
-    return read_xls(db=db, file=file)
-
-
-@app.post("/upload-awards-data")
-async def upload_awards_data_endpoint(
-        db: Session = Depends(get_db),
-        file: UploadFile = File(...)
-):
-    return read_xlsx(db=db, file=file)
-
-
-@app.delete("/nuke")
-async def nuke_db_endpoint(db: Session = Depends(get_db)):
-    return nuclear_launch_detected(db=db)
+@app.route("/", methods=["GET", "POST"])
+def home():
+    if request.method == "POST":
+        files = request.files.getlist("files")
+        if files[0].filename[-4:] == "xlsx":
+            date = files[1].filename.split("-")[1][:3]
+            df1 = read_xlsx(files[0])
+            df2 = read_xls(files[1])
+            fuzzy_merge_export(df1, df2, date)
+            return send_file(
+                shutil.make_archive(
+                    "both_CSVs",
+                    "zip",
+                    os.path.join(os.path.abspath("app"), "csv")
+                ),
+                as_attachment=True,
+            )
+        else:
+            date = files[0].filename.split("-")[1][:3]
+            df1 = read_xlsx(files[1])
+            df2 = read_xls(files[0])
+            fuzzy_merge_export(df1, df2, date)
+            return send_file(
+                shutil.make_archive(
+                    "both_CSVs",
+                    "zip",
+                    os.path.join(os.path.abspath("app"), "csv")
+                ),
+                as_attachment=True,
+            )
+    else:
+        return render_template("main.html")

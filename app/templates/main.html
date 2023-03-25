@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block content %}
+<header>
+    <h1>Welcome to Gansho!</h1>
+</header>
+<p>
+    Gansho is an application that will take the Awards and
+    OneSite files, upload the data, "fuzzy merge" on the name,
+    then output the merged data into a zip folder that
+    houses 2 CSV files, one for all the matches found, and the
+    other shows clients who were not matched, if there are any.
+<p>
+<h4>NOTEs</h4>
+</p>
+<p>
+    There are few limitations to Gansho:
+</p>
+<ul style="font-style:italic; font-size:0.9em;">
+    <li>
+        Only use one month of data at a time for the Awards
+        and OneSite files
+    </li>
+    <li>
+        You will need to upload an Awards file and a OneSite
+        file at the same time.
+    </li>
+    <li>
+        Since the fuzzy merge uses the name of clients to match and merge,
+        there may be an instance where 2 different people living in the same
+        building with the same name occurs, it's rare but possible, the merge
+        for those clients may be erroneous.
+    </li>
+</ul>
+<p>
+    Since some clients were not matched, those clients were coalesced into the
+    "clients_without_matches_{month}.csv" for further analysis.
+</p>
+<form action="{{ url_for('home') }}" method="POST" enctype="multipart/form-data">
+    <p><label>Upload Awards and OneSite Files
+        <input type="file" name="files" multiple>
+        <input type="submit" value="Process">
+    </label></p>
+    <br class="clear"/>
+</form>
+<p>
+    A fuzzy merge is where a column from one data set and another
+    column from the other data set
+    is used to match similar values and then merge two data
+    sets together on that match.
+</p>
+{% endblock %}
